@@ -1,0 +1,1005 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is a sample Twitter server.
+  version: "1.0.0"
+  title: Intern Task to create Twitter
+
+tags:
+  - name: user
+    description: Users can create and like posts.
+  - name: authorization
+  - name: post
+  - name: image
+  - name: like
+paths:
+  /signin:
+    post:
+      tags:
+      - authorization
+      summary: Logs user into the system
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    description: username must be unique
+                  password:          
+                    type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Token:
+              description: JSON web Tokens
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: base64
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '404':
+          description: A user with the specified username was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /signup:  
+    post:
+      tags:
+      - authorization
+      summary: Create new user
+      operationId: createNewUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: successful operation, return user id
+          headers:
+            X-Token:
+              description: JSON web Tokens
+              style: simple
+              explode: false
+              schema:
+                type: string
+                format: base64
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /logout:
+    post:
+      tags:
+      - authorization
+      summary: log out of the user's account
+      operationId: logout
+      responses:
+        '204':
+          description: successful operation
+  '/users/{user_id}':
+    get:
+      tags:
+        - user
+      summary: Get user
+      operationId: getUser
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/User'  
+                  - $ref: '#/components/schemas/Image'
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      operationId: deleteUser
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'  
+    put:
+      tags:
+        - user
+      summary: Update user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid user_id value. User with user_id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/username:
+    put:
+      tags:
+        - user
+      summary: Update username
+      description: This can only be done by the logged in user.
+      operationId: updateUsername
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          username:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid user_id value. User with user_id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/email:
+    put:
+      tags:
+        - user
+      summary: Update user email
+      description: This can only be done by the logged in user. User must confirm by email
+      operationId: updateEmail
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          email:
+            schema:
+              type: string
+      responses:
+        '204':
+          description: successful operation
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid user_id value. User with user_id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/password:
+    put:
+      tags:
+        - user
+      summary: Update user password
+      description: This can only be done by the logged in user.
+      operationId: updatePassword
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                newPasswordReplay:
+                  type: string
+      responses:
+        '204':
+          description: successful operation
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid user_id value. User with user_id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/images:
+    post:
+      tags:
+      - image
+      summary: add Image
+      operationId: addImage
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          application/octet-stream: 
+            schema:
+              type: string
+              format: binary 
+      responses:
+        '204':
+          description: successful operation
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'     #For me: $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Invalid user_id value. User with user_id not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      #For me: $ref: '#/components/responses/NotFound'
+  '/users/{user_id}/images/{image_id}':
+    put:
+      tags:
+        - image
+      summary: Update user image
+      description: This can only be done by the logged in user.
+      operationId: updateImage
+      parameters:
+        - name: user_id
+          in: path
+          description: User id 
+          required: true
+          schema:
+            type: string
+        - name: image_id
+          in: path
+          description: Image id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+    delete:
+      tags:
+          - image
+      summary: Delete user photo
+      operationId: deletePhoto
+      parameters:
+        - name: user_id
+          in: path
+          description: user_id of the person whose photo you want to delete
+          required: true
+          schema:
+            type: string
+        - name: image_id
+          in: path
+          description: Image id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog' 
+  /posts:    #for me: /posts?page=int&size=int:
+    get:
+      tags:
+        - post
+      summary: Get a certain number (= size) of posts on page
+      operationId: getPosts
+      parameters:
+        - name: page
+          in: query
+          description: current page
+          required: true
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: a certain number (= size) of posts on page
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/posts:   #for me: /users/{user_id}/posts?page=int&size=int:     
+    get:
+      tags:
+        - post
+      summary: Get user posts
+      operationId: getUserPosts
+      parameters:
+        - name: user_id
+          in: path
+          description: User id that need to be considered for filter
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: current page
+          required: true
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: a certain number (= size) of posts on page
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64      
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/post:
+    post:
+      tags:
+        - post
+      summary: Create a new post
+      operationId: createPost
+      parameters:
+        - name: user_id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+        description: Created post
+        required: true
+      responses:
+        '201':
+          description: Succesful operation, return post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+    put:
+      tags:
+        - post
+      summary: Update user post
+      description: This can only be done by the logged in user.
+      operationId: updatePost
+      parameters:
+        - name: user_id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+        - name: post_id
+          in: path
+          description: Post id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+    delete:
+      tags:
+        - post
+      summary: Delete post
+      operationId: deletePost
+      parameters:
+        - name: user_id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+        - name: post_id
+          in: path
+          description: Post id 
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+  /users/{user_id}/favorites:
+    get:
+      tags:
+        - post
+      summary: Get favorites posts
+      operationId: getFavorites
+      parameters:
+        - name: user_id
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: current page
+          required: true
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: a certain number (= size) of posts on page
+          required: true
+          schema:
+            type: integer
+        - name: Authorization
+          in: header
+          description: JSON Web Token
+          schema:
+            type: string
+            format: base64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '400':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  '/posts/{post_id}':          
+    get:
+      tags:
+        - post
+      summary: Get post
+      operationId: getPost
+      parameters:
+        - name: post_id
+          in: path
+          description: Post id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+  /users/{user_id}/posts/{post_id}/likes:        
+    post:
+      tags:
+        - like
+      summary: Like post
+      operationId: postLike
+      parameters:
+        - name: user_id
+          in: path
+          description: User id that need to be considered for filter
+          required: true
+          schema:
+            type: string
+        - name: post_id
+          in: path
+          description: Post id that need to be considered for filter
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+    delete:
+      tags:
+        - like
+      summary: Delete like
+      operationId: deleteLike
+      parameters:
+        - name: user_id
+          in: path
+          description: User id that need to be considered for filter
+          required: true
+          schema:
+            type: string
+        - name: post_id
+          in: path
+          description: Post id that need to be considered for filter
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '401':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '403':
+          description: Authorization information is missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+        '404':
+          description: credentials.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationLog'      
+
+components:
+  schemas:
+  
+    OperationLog:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+        
+    Page:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+        index:
+          type: integer
+        size:
+          type: integer
+      required:
+        - totalPages
+        - index
+        - size
+        
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+        username:
+          type: string
+          description: username must be unique
+        firstName:
+          type: string
+        lastName:
+          type: string
+      required:
+        - user_id
+        - username
+        - firstName
+        - lastName
+        
+    Image:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+      required:
+        - image
+    
+    Post:
+      type: object
+      properties:
+        post_id:
+          type: string
+        message:
+          type: string
+          description: post - body up to 255 symbols
+        likes:
+          type: integer
+          description: number of likes
+      required:
+        - post_id
+        - message
+        - likes
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/gormak00/InternTask/1.0.0

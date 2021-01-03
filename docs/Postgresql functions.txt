@@ -1,0 +1,102 @@
+CREATE TABLE users
+(
+    id INTEGER PRIMARY KEY,
+    firstName VARCHAR(25),
+    lastName VARCHAR(25),
+    username VARCHAR(25),
+    email VARCHAR(50),
+    password VARCHAR(20)
+);
+
+CREATE TABLE posts
+(
+    id INTEGER,
+    user_id INTEGER,
+    date VARCHAR(255),
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE likes
+(
+    id INTEGER,
+    post_id INTEGER,
+    user_id INTEGER,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (post_id) REFERENCES posts(id)
+);
+
+CREATE TABLE images
+(
+    id INTEGER,
+    user_id INTEGER,
+    content BYTEA,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+INSERT INTO users (id, firstName, lastName, username, email, password)
+VALUES
+(1, 'Yahor', 'Yahor2', 'Yahor3', 'Yahor4', 'Yahor5'),
+(2, 'Darya', 'Darya2', 'Darya3', 'Darya4', 'Darya5'),
+(3, 'Alex', 'Alex2', 'Alex3', 'Alex4', 'Alex5'),
+(4, 'Yuliya', 'Yuliya2', 'Yuliya3', 'Yuliya4', 'Yuliya5'),
+(5, 'Daniil', 'Daniil2', 'Daniil3', 'Daniil4', 'Daniil5');
+
+INSERT INTO posts (id, user_id, date)
+VALUES
+(1, 1, 'HELLLLLLLLOOOOOOOOO YAHOR'),
+(2, 2, 'HELLLLLLLLOOOOOOOOO Darya5'),
+(3, 2, 'HELLLLLLLLOOOOOOOOO Alex5'),
+(4, 4, 'HELLLLLLLLOOOOOOOOO Yuliya5'),
+(5, 5, 'HELLLLLLLLOOOOOOOOO Daniil5');
+
+INSERT INTO likes (id, post_id, user_id)
+VALUES
+(1, 1, 2),
+(2, 1, 3),
+(3, 2, 1),
+(4, 2, 4),
+(5, 2, 5),
+(1, 1, 1);
+
+SELECT * FROM users WHERE id = 1;           // Получить пользователя по id
+
+SELECT users.* 
+    FROM users, likes 
+    WHERE users.id = likes.user_id 
+    AND likes.post_id = 1;                  // Получить пользователей, которым понравился пост
+
+SELECT date FROM posts;                     // Получить все посты
+
+SELECT posts.date 
+    FROM users, posts 
+    WHERE users.id = posts.user_id 
+    AND users.username = 'Yahor3';          // Получить все посты пользователя
+
+SELECT posts.date 
+    FROM users, posts, likes 
+    WHERE likes.user_id = users.id
+    AND likes.post_id = posts.id 
+    AND users.username = 'Yahor3';          // Получить все понравившиеся посты пользователя
+
+SELECT content FROM images;                 // Получить картинку 
+                                               (не понял до конца какую картинку надо получить...
+                                                имелось в виду все картинки?)
+
+SELECT images.content 
+    FROM users, images 
+    WHERE users.id = images.user_id 
+    AND users.username = 'Yahor3';          // Получить картинку пользователя  
+
+SELECT count(likes.id) 
+    FROM posts, likes 
+    WHERE likes.post_id = posts.id 
+    AND posts.id = 1;                       // Получить количество лайков на посте  
+
+SELECT count(posts.date) 
+    FROM users, posts, likes 
+    WHERE likes.user_id = users.id
+    AND likes.post_id = posts.id 
+    AND users.username = 'Yahor3';          // Получить количество понравившихся постов пользователя                                      
