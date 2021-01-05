@@ -5,14 +5,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class JWTUtil {
@@ -39,21 +35,19 @@ public class JWTUtil {
     //извлечение authorities (внутри валидация токена)
     public String extractAuthorities(String token) {
         Function<Claims, String> claimsListFunction = claims -> {
-            return (String)claims.get("authorities");
+            return (String) claims.get("authorities");
         };
         return extractClaim(token, claimsListFunction);
     }
 
 
-
-    private  <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
-        //return Jwts.parser().setSigningKey(SECRET_KEY).parse(token).getBody();
     }
 
 

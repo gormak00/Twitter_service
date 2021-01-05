@@ -7,6 +7,7 @@ import by.application.Twitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,18 +20,30 @@ public class AuthenticationController {
     private JWTUtil jwtTokenUtil;
 
     @PostMapping("/signin")
-    public void signIn(@RequestBody LoginDetails loginDetails){
-        //throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Имя или пароль неправильны", e);
+    public ResponseEntity<?> signIn(@RequestBody LoginDetails loginDetails) {
+        String token = null;
+        if (userService.existUserByCredentials(loginDetails)) token = jwtTokenUtil
+                .generateToken(new LoginDetails(loginDetails.getUsername(), loginDetails.getPassword()));
+
+        return token != null
+                ? new ResponseEntity(token, HttpStatus.CREATED)
+                : new ResponseEntity("Username or password is incorrect", HttpStatus.UNAUTHORIZED);
     }
 
-    @PostMapping("/singup")
-    public ResponseEntity<?> singUp(@RequestBody User user){
+    @PostMapping("/signup")
+    public ResponseEntity<?> singUp(@RequestBody User user) {
         userService.createUser(user);
-        String token = null;
-        token = jwtTokenUtil.generateToken(new LoginDetails(user.getUsername(), user.getPassword()));
+        String token = jwtTokenUtil.generateToken(new LoginDetails(user.getUsername(), user.getPassword()));
 
-        return !token.isEmpty()
+        return token != null
                 ? new ResponseEntity(token, HttpStatus.CREATED)
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<?> allUsers() {
+        userService.getAllUsers();
+
+        return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
     }
 }
