@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  app:
+    container_name: twitter_app_container
+    image: twitter_app_image:latest
+    build: ./
+    volumes:
+      - /tmp:/twitterdata
+    ports:
+      - 8080:8080
+    depends_on:
+      - dbpostgresql
+  dbpostgresql:
+    image: postgres
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=100001
+      - POSTGRES_USER=gormak
+      - POSTGRES_DB=twitter
+    ports:
+      - 5432
+
+volumes:
+  twitterdata:
+  postgres_db:
