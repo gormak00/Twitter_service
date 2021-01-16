@@ -7,7 +7,6 @@ import by.application.Twitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,12 +37,5 @@ public class AuthenticationController {
         return token != null
                 ? new ResponseEntity(token, HttpStatus.CREATED)
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<?> allUsers() {
-        userService.getAllUsers();
-
-        return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
     }
 }
