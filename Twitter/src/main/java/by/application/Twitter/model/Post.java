@@ -24,6 +24,6 @@ public class Post {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "date")
-    private String date;
+    @Column(name = "data")
+    private String data;
 }
