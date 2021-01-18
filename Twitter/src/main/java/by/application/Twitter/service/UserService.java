@@ -1,6 +1,7 @@
 package by.application.Twitter.service;
 
 import by.application.Twitter.model.LoginDetails;
+import by.application.Twitter.model.Post;
 import by.application.Twitter.model.User;
 
 import java.util.List;
@@ -44,4 +45,6 @@ public interface UserService {
      * @return User - пользователь с заданным username, null - если такого пользователя нет
      */
     User getUserByUsername(String username);
+
+    List<Post> getAllFavoritesPostsByUserId(int id);
 }

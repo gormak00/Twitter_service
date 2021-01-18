@@ -13,7 +13,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Post save(Post post);
     List<Post> findAll();
     Post findById(int id);
-    void deleteById(Post entity);
+    void deleteById(int id);
     Post findByIdAndUserId(int id, int userId);
 
     //UPDATE
