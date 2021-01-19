@@ -1,8 +1,5 @@
 package by.application.Twitter.controller;
 
-import by.application.Twitter.controller.dataTransferObject.PostDto;
-import by.application.Twitter.controller.dataTransferObject.PostMapper;
-import by.application.Twitter.model.Post;
 import by.application.Twitter.model.User;
 import by.application.Twitter.service.LikeService;
 import by.application.Twitter.service.PostService;
@@ -11,19 +8,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-public class LikeController extends BaseController{
+public class LikeController extends BaseController {
     @Autowired
     private LikeService likeService;
     @Autowired
     private PostService postService;
 
-    @PostMapping("/user/{userId}/post/{postId}/like")
+    @PostMapping(value = "/user/{userId}/post/{postId}/like")
     public ResponseEntity<?> createLikeOnPost(@PathVariable(name = "userId") int userId, @PathVariable(name = "postId") int postId) {
-        if(postService.isUserIdCorrectByPostId(userId, postId)) {
+        if (postService.isUserIdCorrectByPostId(userId, postId)) {
             User user = getUserNameFromToken();
             return likeService.createLike(postId, user.getId())
                     ? new ResponseEntity(HttpStatus.OK)
@@ -31,9 +27,9 @@ public class LikeController extends BaseController{
         } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/user/{userId}/post/{postId}/like")
+    @DeleteMapping(value = "/user/{userId}/post/{postId}/like")
     public ResponseEntity<?> deleteLikeOnPost(@PathVariable(name = "userId") int userId, @PathVariable(name = "postId") int postId) {
-        if(postService.isUserIdCorrectByPostId(userId, postId)) {
+        if (postService.isUserIdCorrectByPostId(userId, postId)) {
             User user = getUserNameFromToken();
             return likeService.deleteLike(postId, user.getId())
                     ? new ResponseEntity(HttpStatus.OK)
@@ -41,9 +37,9 @@ public class LikeController extends BaseController{
         } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/user/{userId}/post/{postId}/like")
+    @GetMapping(value = "/user/{userId}/post/{postId}/like")
     public ResponseEntity<?> getAllLikesFromPost(@PathVariable(name = "userId") int userId, @PathVariable(name = "postId") int postId) {
-        if(postService.isUserIdCorrectByPostId(userId, postId)) {
+        if (postService.isUserIdCorrectByPostId(userId, postId)) {
             List<User> allUsers = likeService.getAllUsersByLikeOnPost(postId);
             return new ResponseEntity(allUsers, HttpStatus.OK);
         } else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

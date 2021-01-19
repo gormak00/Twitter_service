@@ -3,9 +3,11 @@ package by.application.Twitter.service;
 import by.application.Twitter.model.Post;
 import by.application.Twitter.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 @Service
 public class PostServiceImpl implements PostService {
     @Autowired
@@ -33,8 +35,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public boolean updatePost(Post post) {
-            int result = postRepository.updatePostById(post.getData(), post.getId());
-            return result == 1;
+        int result = postRepository.updatePostById(post.getData(), post.getId());
+        return result == 1;
     }
 
     @Override
@@ -43,8 +45,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public Page<Post> getAllPosts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> allPosts = postRepository.findAll(pageable);
+        return allPosts;
     }
 
     @Override

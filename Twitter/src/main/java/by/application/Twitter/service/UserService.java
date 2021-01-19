@@ -46,5 +46,13 @@ public interface UserService {
      */
     User getUserByUsername(String username);
 
-    List<Post> getAllFavoritesPostsByUserId(int id);
+    /**
+     * Возврат понравившихся постов пользователя
+     *
+     * @param id   - id пользователя
+     * @param page - текущая страница
+     * @param size - колличество результатов на странице
+     * @return List<Post> - список постов
+     */
+    List<Post> getAllFavoritesPostsByUserId(int id, int page, int size);
 }

@@ -4,6 +4,8 @@ import by.application.Twitter.model.Like;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.LikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,8 +37,8 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public List<Like> getAllLikesByUserId(int userId) {
-        return likeRepository.findAllByUserId(userId);
+    public Page<Like> getAllLikesByUserId(int userId, Pageable pageable) {
+        return likeRepository.findAllByUserId(userId, pageable);
     }
 
     @Override

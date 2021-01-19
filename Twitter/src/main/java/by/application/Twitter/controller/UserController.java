@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,14 +18,14 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping(value = "/users")
     public ResponseEntity<?> allUsers() {
         userService.getAllUsers();
 
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping(value = "/user/{id}")
     public ResponseEntity<?> getUser(@PathVariable(name = "id") int id) {
         User userFromToken = getUserNameFromToken();
         if (userFromToken.getId() == id) {
@@ -34,11 +35,11 @@ public class UserController extends BaseController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/user/{id}/favorites")
-    public ResponseEntity<?> getAllFavoritesPosts(@PathVariable(name = "id") int id) {
+    @GetMapping(value = "/user/{id}/favorites", params = {"page", "size"})
+    public ResponseEntity<?> getAllFavoritesPosts(@PathVariable(name = "id") int id, @RequestParam("page") int page, @RequestParam("size") int size) {
         User userFromToken = getUserNameFromToken();
         if (userFromToken.getId() == id) {
-            List<Post> favoritesPosts = userService.getAllFavoritesPostsByUserId(id);
+            List<Post> favoritesPosts = userService.getAllFavoritesPostsByUserId(id, page, size);
             return new ResponseEntity(favoritesPosts, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface PostMapper {
-    static Post ToPost(PostDto postDto, int userId){
+    static Post ToPost(PostDto postDto, int userId) {
         Post post = new Post();
         post.setUserId(userId);
         post.setData(postDto.getData());

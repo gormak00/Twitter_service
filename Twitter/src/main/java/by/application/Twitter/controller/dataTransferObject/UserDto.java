@@ -7,8 +7,10 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 @AllArgsConstructor
-@Getter@Setter
+@Getter
+@Setter
 public class UserDto {
 
     @NotNull(message = "Empty username field")

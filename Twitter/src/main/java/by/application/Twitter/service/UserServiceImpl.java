@@ -6,6 +6,9 @@ import by.application.Twitter.model.Post;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,10 +62,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Post> getAllFavoritesPostsByUserId(int id) {
-        List<Like> allLikes = likeService.getAllLikesByUserId(id);
+    public List<Post> getAllFavoritesPostsByUserId(int id, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Like> allLikes = likeService.getAllLikesByUserId(id, pageable);
         List<Post> allPosts = new ArrayList<>();
-        for (Like currentLike: allLikes) {
+        for (Like currentLike: allLikes.getContent()) {
             allPosts.add(postService.getPostById(currentLike.getPostId()));
         }
         return allPosts;
