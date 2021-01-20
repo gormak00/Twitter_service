@@ -2,7 +2,10 @@ package by.application.Twitter.repository;
 
 import by.application.Twitter.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,4 +18,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findById(int id);
 
     User findByUsername(String username);
-}
+
+    //UPDATE
+    @Transactional
+    @Modifying
+    @Query( value = "UPDATE users " +
+            "SET username = ?1, " +
+            "password = ?2, " +
+            "firstname = ?3, " +
+            "lastname = ?4, " +
+            "email = ?5 " +
+            "WHERE id = ?6",
+            nativeQuery = true)
+    int updateUser(String username, String password, String firstName, String secondName, String email, int id);}

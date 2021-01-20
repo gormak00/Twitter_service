@@ -5,6 +5,7 @@ import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.Post;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.UserRepository;
+import by.application.Twitter.service.exception.NotUnic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean createUser(User user) {
         List<User> allUsers = userRepository.findAll();
+        //check to unic username
+        for (User userFromDB : allUsers) {
+            if (userFromDB.getUsername().equals(user.getUsername())) {
+                throw new NotUnic();
+            }
+        }
         user.setId(allUsers.size() + 1);
         userRepository.save(user);
         return true;
@@ -70,5 +77,21 @@ public class UserServiceImpl implements UserService {
             allPosts.add(postService.getPostById(currentLike.getPostId()));
         }
         return allPosts;
+    }
+
+    @Override
+    public void updateUser(User userToUpdate, int id) {
+        for (User userFromDB : userRepository.findAll()) {
+            if (userFromDB.getUsername().equals(userToUpdate.getUsername()) /*&& !userToUpdate.getUsername().equals(getUserById(id).getUsername())*/) {
+                throw new NotUnic();
+            }
+        }
+        userRepository.updateUser(userToUpdate.getUsername(), userToUpdate.getPassword(), userToUpdate.getFirstName(), userToUpdate.getLastName(), userToUpdate.getEmail(), id);
+    }
+
+    @Override
+    public boolean deleteUserById(int id) {
+        userRepository.deleteById(id);
+        return true;
     }
 }

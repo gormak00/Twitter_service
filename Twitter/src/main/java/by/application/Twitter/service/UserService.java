@@ -55,4 +55,20 @@ public interface UserService {
      * @return List<Post> - список постов
      */
     List<Post> getAllFavoritesPostsByUserId(int id, int page, int size);
+
+    /**
+     * Обновление аккаунта пользователя
+     *
+     * @param id   - id пользователя
+     * @param userToUpdate - данные о новом пользователе
+     */
+    void updateUser(User userToUpdate, int id);
+
+    /**
+     * Удаление пользователя
+     *
+     * @param id   - id пользователя
+     * @return true - если удалил
+     */
+    boolean deleteUserById(int id);
 }
