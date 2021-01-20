@@ -7,15 +7,27 @@ import by.application.Twitter.controller.dataTransferObject.UserMapper;
 import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.User;
 import by.application.Twitter.security.JWTUtil;
+import by.application.Twitter.service.GoogleAuthService;
 import by.application.Twitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.ResolvableType;
+import org.springframework.http.*;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class AuthenticationController {
@@ -23,6 +35,13 @@ public class AuthenticationController {
     private UserService userService;
     @Autowired
     private JWTUtil jwtTokenUtil;
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
+    @Autowired
+    private GoogleAuthService googleAuthService;
+
+    private static final String authorizationRequestBaseUri = "oauth2/authorize-client";
+    private Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
     @PostMapping(value = "/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginDetailsDto loginDetailsDto) {
@@ -45,5 +64,31 @@ public class AuthenticationController {
         return token != null
                 ? new ResponseEntity(token, HttpStatus.CREATED)
                 : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(value = "/login")
+    public String getLoginPage(Model model) {
+        Iterable<ClientRegistration> clientRegistrations = null;
+        ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository)
+                .as(Iterable.class);
+        if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+            clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+        }
+
+        clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(), authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+        model.addAttribute("urls", oauth2AuthenticationUrls);
+
+        return "login";
+    }
+
+    @GetMapping(value = "/loginSuccess")
+    public String getLoginInfo(Model model, OAuth2AuthenticationToken authentication) {
+        Map userAttributes = googleAuthService.getUserAttributes(authentication);
+        User user = googleAuthService.loadUser(userAttributes);
+        userService.saveUserFromGoogle(user);
+        model.addAttribute("name", user.getFirstName());
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("password", user.getPassword());
+        return "loginSuccess";
     }
 }

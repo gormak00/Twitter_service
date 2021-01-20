@@ -71,4 +71,11 @@ public interface UserService {
      * @return true - если удалил
      */
     boolean deleteUserById(int id);
+
+    /**
+     * Сохранение пользователя из Google
+     *
+     * @param user   - пользователь
+     */
+    void saveUserFromGoogle(User user);
 }

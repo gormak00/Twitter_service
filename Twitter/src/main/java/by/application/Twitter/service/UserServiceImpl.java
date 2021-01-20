@@ -5,6 +5,7 @@ import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.Post;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.UserRepository;
+import by.application.Twitter.service.exception.InvalidCredentials;
 import by.application.Twitter.service.exception.NotUnic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -93,5 +94,20 @@ public class UserServiceImpl implements UserService {
     public boolean deleteUserById(int id) {
         userRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public void saveUserFromGoogle(User user){
+        if (user == null){
+            throw new InvalidCredentials();
+        }
+        for (User userFromDB : userRepository.findAll()) {
+            if (userFromDB.getUsername().equals(user.getUsername())) {
+                throw new NotUnic();
+            }
+        }
+        final int userId = (int) userRepository.count() + 1;
+        user.setId(userId);
+        userRepository.save(user);
     }
 }
