@@ -5,7 +5,9 @@ import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.Post;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.UserRepository;
+import by.application.Twitter.config.security.JWTUtil;
 import by.application.Twitter.service.exception.InvalidCredentials;
+import by.application.Twitter.service.exception.NotConfirmation;
 import by.application.Twitter.service.exception.NotUnic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,6 +29,10 @@ public class UserServiceImpl implements UserService {
     private LikeService likeService;
     @Autowired
     private PostService postService;
+    @Autowired
+    private MailSender mailSender;
+    @Autowired
+    private JWTUtil jwtTokenUtil;
 
     @Override
     public boolean createUser(User user) {
@@ -34,8 +43,19 @@ public class UserServiceImpl implements UserService {
                 throw new NotUnic();
             }
         }
+        user.setActivationCode(UUID.randomUUID().toString());
         user.setId(allUsers.size() + 1);
         userRepository.save(user);
+
+        if (!isEmpty(user.getEmail())) {
+            String message = String.format(
+                    "Hello, %s! \n" +
+                            "Welcome to Twitter. Please visit next link:  http://localhost:8080/activate/%s",
+                    user.getUsername(),
+                    user.getActivationCode()
+            );
+            mailSender.send(user.getEmail(), "Activation code", message);
+        }
         return true;
     }
 
@@ -109,5 +129,28 @@ public class UserServiceImpl implements UserService {
         final int userId = (int) userRepository.count() + 1;
         user.setId(userId);
         userRepository.save(user);
+    }
+
+    @Override
+    public String activateUser(String code) {
+        User user = userRepository.findByActivationCode(code);
+
+        if (user == null) {
+            return null;
+        }
+
+        user.setActivationCode(null);
+        userRepository.save(user);
+
+        final String token = jwtTokenUtil.generateToken(new LoginDetails(user.getUsername(), user.getPassword()));
+        return token;
+    }
+
+    @Override
+    public boolean isUserActivated(String username) {
+        if (getUserByUsername(username).getActivationCode() == null){
+            return true;
+        }
+        throw new NotConfirmation();
     }
 }

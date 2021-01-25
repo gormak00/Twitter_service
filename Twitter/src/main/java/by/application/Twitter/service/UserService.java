@@ -78,4 +78,20 @@ public interface UserService {
      * @param user   - пользователь
      */
     void saveUserFromGoogle(User user);
+
+    /**
+     * Активация пользователя с помощью активационного кода
+     *
+     * @param code   - активационный код
+     * @return token - возвращает токен пользователя, который прошел активацию
+     */
+    String activateUser(String code);
+
+    /**
+     * Проверка активирован ли пользователь
+     *
+     * @param username   - username пользователя
+     * @return true - если поле activationCode == null
+     */
+    boolean isUserActivated(String username);
 }

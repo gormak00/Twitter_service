@@ -30,4 +30,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "email = ?5 " +
             "WHERE id = ?6",
             nativeQuery = true)
-    int updateUser(String username, String password, String firstName, String secondName, String email, int id);}
+    int updateUser(String username, String password, String firstName, String secondName, String email, int id);
+
+    User findByActivationCode(String code);
+}

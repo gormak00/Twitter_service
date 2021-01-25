@@ -63,6 +63,6 @@ public class PostController extends BaseController {
     @GetMapping(value = "/posts", params = {"page", "size"})
     public ResponseEntity<?> getAllPosts(@RequestParam("page") int page, @RequestParam("size") int size) {
         Page<Post> allPosts = postService.getAllPosts(page, size);
-        return new ResponseEntity(allPosts, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(allPosts, HttpStatus.OK);
     }
 }

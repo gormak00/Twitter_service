@@ -6,24 +6,18 @@ import by.application.Twitter.controller.dataTransferObject.UserDto;
 import by.application.Twitter.controller.dataTransferObject.UserMapper;
 import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.User;
-import by.application.Twitter.security.JWTUtil;
+import by.application.Twitter.config.security.JWTUtil;
 import by.application.Twitter.service.GoogleAuthService;
 import by.application.Twitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.http.*;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -47,8 +41,9 @@ public class AuthenticationController {
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginDetailsDto loginDetailsDto) {
         LoginDetails loginDetails = LoginDetailsMapper.toLoginDetails(loginDetailsDto);
         String token = null;
-        if (userService.existUserByCredentials(loginDetails)) token = jwtTokenUtil
-                .generateToken(new LoginDetails(loginDetails.getUsername(), loginDetails.getPassword()));
+        if (userService.existUserByCredentials(loginDetails) && userService.isUserActivated(loginDetails.getUsername()))
+            token = jwtTokenUtil
+                    .generateToken(new LoginDetails(loginDetails.getUsername(), loginDetails.getPassword()));
 
         return token != null
                 ? new ResponseEntity(token, HttpStatus.CREATED)
@@ -60,6 +55,15 @@ public class AuthenticationController {
         User user = UserMapper.toUser(userDto);
         userService.createUser(user);
         String token = jwtTokenUtil.generateToken(new LoginDetails(user.getUsername(), user.getPassword()));
+
+        return token != null
+                ? new ResponseEntity(HttpStatus.CREATED)
+                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/activate/{code}")
+    public ResponseEntity<?> activate(@PathVariable(name = "code") String code) {
+        String token = userService.activateUser(code);
 
         return token != null
                 ? new ResponseEntity(token, HttpStatus.CREATED)
