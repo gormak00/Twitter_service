@@ -1,4 +1,4 @@
-# Intern backend engineer test task
+# Twitter-like service
 
 ## Description
 
@@ -37,21 +37,3 @@ Authorised user can:
 6. Use docker-compose file to run service, db and other monitoring tools.
 7. Integration tests for service, that should cover various user scenarios.
 8. Public Github Repo from begging, working with Pull Requests
-
-## Ordered Output
-1. swagger definition + database scheme
-2. register/login + jwt token + inmemory store + tests
-3. database + docker setup
-4. connect app to database
-5. post endpoints impl + tests
-4. test endpoints impl + tests
-
-
-## Hints
-
-* You can create a simple ui for demonstration
-* Create small, atomic git commits. Implement features one-by-ony.
-
-## Hard mode
-If described above requirements are too easy for you, consider next addition tasks:
-1. Enable websocket for full-duplex communication between client and server side.
