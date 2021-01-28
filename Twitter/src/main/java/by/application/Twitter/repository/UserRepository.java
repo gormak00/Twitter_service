@@ -15,14 +15,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User save(User user);
 
-    User findById(int id);
+    //User findById(int id);
 
     User findByUsername(String username);
 
     //UPDATE
     @Transactional
     @Modifying
-    @Query( value = "UPDATE users " +
+    @Query(value = "UPDATE users " +
             "SET username = ?1, " +
             "password = ?2, " +
             "firstname = ?3, " +

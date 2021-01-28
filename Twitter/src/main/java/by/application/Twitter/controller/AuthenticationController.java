@@ -1,12 +1,12 @@
 package by.application.Twitter.controller;
 
+import by.application.Twitter.config.security.JWTUtil;
 import by.application.Twitter.controller.dataTransferObject.LoginDetailsDto;
 import by.application.Twitter.controller.dataTransferObject.LoginDetailsMapper;
 import by.application.Twitter.controller.dataTransferObject.UserDto;
 import by.application.Twitter.controller.dataTransferObject.UserMapper;
 import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.User;
-import by.application.Twitter.config.security.JWTUtil;
 import by.application.Twitter.service.GoogleAuthService;
 import by.application.Twitter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
+//@RestController
+@Controller
 public class AuthenticationController {
     @Autowired
     private UserService userService;

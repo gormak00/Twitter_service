@@ -62,8 +62,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existUserByCredentials(LoginDetails loginDetails) {
         List<User> allUsers = userRepository.findAll();
-        for (User user: allUsers) {
-            if (user.getUsername().equals(loginDetails.getUsername()) && user.getPassword().equals(loginDetails.getPassword())){
+        for (User user : allUsers) {
+            if (user.getUsername().equals(loginDetails.getUsername()) && user.getPassword().equals(loginDetails.getPassword())) {
                 return true;
             }
         }
@@ -77,16 +77,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(int id) {
-        User user = userRepository.findById(id);
-        if(user == null) return null;
-        return user;
+        return userRepository.findById(id).orElse(new User());
     }
 
     @Override
     public User getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if(user == null) return null;
-        return user;
+        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -94,7 +90,7 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Like> allLikes = likeService.getAllLikesByUserId(id, pageable);
         List<Post> allPosts = new ArrayList<>();
-        for (Like currentLike: allLikes.getContent()) {
+        for (Like currentLike : allLikes.getContent()) {
             allPosts.add(postService.getPostById(currentLike.getPostId()));
         }
         return allPosts;
@@ -117,8 +113,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUserFromGoogle(User user){
-        if (user == null){
+    public void saveUserFromGoogle(User user) {
+        if (user == null) {
             throw new InvalidCredentials();
         }
         for (User userFromDB : userRepository.findAll()) {
@@ -148,7 +144,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isUserActivated(String username) {
-        if (getUserByUsername(username).getActivationCode() == null){
+        if (getUserByUsername(username).getActivationCode() == null) {
             return true;
         }
         throw new NotConfirmation();
