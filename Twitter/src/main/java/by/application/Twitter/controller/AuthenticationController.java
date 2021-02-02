@@ -27,7 +27,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-//@RestController
 @Controller
 public class AuthenticationController {
     @Autowired

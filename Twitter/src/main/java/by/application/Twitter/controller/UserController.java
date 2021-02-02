@@ -19,8 +19,6 @@ public class UserController extends BaseController {
 
     @GetMapping(value = "/users")
     public ResponseEntity<?> allUsers() {
-        userService.getAllUsers();
-
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
     }
 

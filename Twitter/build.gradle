@@ -21,7 +21,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'
     compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.3.0.RELEASE' //2.4.2
 
     // security
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '5.4.2'
@@ -35,6 +35,13 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
     compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     compile group: 'org.mapstruct', name: 'mapstruct', version: '1.4.1.Final'
+
+    testCompile group: 'junit', name: 'junit', version: '4.13'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
 }
 
 test {
