@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class UserController extends BaseController {
     }
 
     @PutMapping(value = "/user/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable(name = "id") int id, @RequestBody UserDto userDto) {
+    public ResponseEntity<?> updateUser(@PathVariable(name = "id") int id, @Valid @RequestBody UserDto userDto) {
         User userToUpdate = UserMapper.toUser(userDto);
         User userFromToken = getUserNameFromToken();
         if (userFromToken.getId() == id) {

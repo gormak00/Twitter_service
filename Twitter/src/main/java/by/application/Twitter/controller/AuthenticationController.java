@@ -18,10 +18,9 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -41,6 +40,7 @@ public class AuthenticationController {
     private static final String authorizationRequestBaseUri = "oauth2/authorize-client";
     private Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
+
     @PostMapping(value = "/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody LoginDetailsDto loginDetailsDto) {
         LoginDetails loginDetails = LoginDetailsMapper.toLoginDetails(loginDetailsDto);
@@ -50,8 +50,8 @@ public class AuthenticationController {
                     .generateToken(new LoginDetails(loginDetails.getUsername(), loginDetails.getPassword()));
 
         return token != null
-                ? new ResponseEntity(token, HttpStatus.CREATED)
-                : new ResponseEntity("Username or password is incorrect", HttpStatus.UNAUTHORIZED);
+                ? new ResponseEntity(token, HttpStatus.OK)
+                : new ResponseEntity("Username or password is incorrect", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = "/signup")
@@ -98,5 +98,20 @@ public class AuthenticationController {
         model.addAttribute("username", user.getUsername());
         model.addAttribute("password", user.getPassword());
         return "loginSuccess";
+    }
+
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    private Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }
