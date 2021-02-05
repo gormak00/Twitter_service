@@ -5,7 +5,8 @@ CREATE TABLE users
     lastName VARCHAR(25),
     username VARCHAR(25),
     email VARCHAR(50),
-    password VARCHAR(20)
+    password VARCHAR(20),
+    activation_code VARCHAR(50)
 );
 
 CREATE TABLE posts
@@ -25,15 +26,6 @@ CREATE TABLE likes
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (post_id) REFERENCES posts(id)
-);
-
-CREATE TABLE images
-(
-    id INTEGER,
-    user_id INTEGER,
-    content BYTEA,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 INSERT INTO users (id, firstName, lastName, username, email, password)
@@ -80,15 +72,6 @@ SELECT posts.date
     WHERE likes.user_id = users.id
     AND likes.post_id = posts.id 
     AND users.username = 'Yahor3';          // Получить все понравившиеся посты пользователя
-
-SELECT content FROM images;                 // Получить картинку 
-                                               (не понял до конца какую картинку надо получить...
-                                                имелось в виду все картинки?)
-
-SELECT images.content 
-    FROM users, images 
-    WHERE users.id = images.user_id 
-    AND users.username = 'Yahor3';          // Получить картинку пользователя  
 
 SELECT count(likes.id) 
     FROM posts, likes 
