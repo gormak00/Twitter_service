@@ -2,17 +2,14 @@ package by.application.Twitter.repository;
 
 import by.application.Twitter.model.User;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @DataJpaTest
-public class UserRepositoryIntegrationTest {
+public class UserRepositoryUnitTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -21,7 +18,7 @@ public class UserRepositoryIntegrationTest {
 
     private User user;
 
-    @Before
+    @BeforeEach
     public void beforeAll() {
         user = new User(1, "Yahor", "Makarchuk", "gormak", "kifew55498@ximtyl.com", "123", null);
         entityManager.persist(user);

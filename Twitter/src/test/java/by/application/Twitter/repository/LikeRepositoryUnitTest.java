@@ -2,9 +2,8 @@ package by.application.Twitter.repository;
 
 import by.application.Twitter.model.Like;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -13,9 +12,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-@RunWith(SpringRunner.class)
 @DataJpaTest
-public class LikeRepositoryIntegrationTest {
+public class LikeRepositoryUnitTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -24,7 +22,7 @@ public class LikeRepositoryIntegrationTest {
 
     private Like like1User1Post1, like2User1Post2, like3User2Post1;
 
-    @Before
+    @BeforeEach
     public void beforeAll() {
         like1User1Post1 = new Like(1, 1, 1);
         like2User1Post2 = new Like(2, 1, 2);

@@ -5,22 +5,22 @@ import by.application.Twitter.model.LoginDetails;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.UserRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RunWith(SpringRunner.class)
-public class UserServiceImplIntegrationTest {
+@ExtendWith(SpringExtension.class)
+public class UserServiceImplUnitTest {
     @TestConfiguration
     static class UserServiceImplTestContextConfiguration {
 
@@ -48,7 +48,7 @@ public class UserServiceImplIntegrationTest {
     private String activationCode, token;
     private LoginDetails loginDetails;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         activationCode = "Activation code";
         token = "token";

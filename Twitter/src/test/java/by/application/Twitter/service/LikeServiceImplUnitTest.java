@@ -4,9 +4,9 @@ import by.application.Twitter.model.Like;
 import by.application.Twitter.model.User;
 import by.application.Twitter.repository.LikeRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -16,13 +16,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
-public class LikeServiceImplIntegrationTest {
+@ExtendWith(SpringExtension.class)
+public class LikeServiceImplUnitTest {
     @TestConfiguration
     static class LikeServiceImplTestContextConfiguration {
 
@@ -46,7 +46,7 @@ public class LikeServiceImplIntegrationTest {
     private Pageable pageable;
     private Page<Like> likePage;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         user1 = new User(1, "gormak", "123", "Yahor", "Makarchuk", "kifew55498@ximtyl.com", null);
         user2 = new User(2, "gormak2", "1234", "Yahor2", "Makarchuk2", "kifew55498@ximtyl.com", null);

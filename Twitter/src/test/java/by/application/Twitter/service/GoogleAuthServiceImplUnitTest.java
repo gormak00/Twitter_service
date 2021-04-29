@@ -2,21 +2,21 @@ package by.application.Twitter.service;
 
 import by.application.Twitter.model.User;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(SpringRunner.class)
-public class GoogleAuthServiceImplIntegrationTest {
+@ExtendWith(SpringExtension.class)
+public class GoogleAuthServiceImplUnitTest {
     @TestConfiguration
     static class GoogleAuthServiceImplTestContextConfiguration {
 
@@ -35,7 +35,7 @@ public class GoogleAuthServiceImplIntegrationTest {
 
     private Map<String, String> testMap;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         testMap = new HashMap<String, String>();
         testMap.put("email", "testEmail@gmail.com");

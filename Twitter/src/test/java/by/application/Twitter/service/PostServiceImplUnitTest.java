@@ -3,9 +3,9 @@ package by.application.Twitter.service;
 import by.application.Twitter.model.Post;
 import by.application.Twitter.repository.PostRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,13 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
-public class PostServiceImplIntegrationTest {
+@ExtendWith(SpringExtension.class)
+public class PostServiceImplUnitTest {
     @TestConfiguration
     static class PostServiceImplTestContextConfiguration {
 
@@ -41,7 +41,7 @@ public class PostServiceImplIntegrationTest {
     private Pageable pageable;
     private Page<Post> postPage;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         post1User1 = new Post(1, 1, "first post");
         post2User1 = new Post(2, 1, "second post");

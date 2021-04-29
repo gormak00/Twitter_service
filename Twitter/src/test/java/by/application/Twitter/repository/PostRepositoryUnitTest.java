@@ -2,19 +2,16 @@ package by.application.Twitter.repository;
 
 import by.application.Twitter.model.Post;
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-@RunWith(SpringRunner.class)
 @DataJpaTest
-public class PostRepositoryIntegrationTest {
+public class PostRepositoryUnitTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -23,7 +20,7 @@ public class PostRepositoryIntegrationTest {
 
     private Post post1User1, post2User1, post3User2;
 
-    @Before
+    @BeforeEach
     public void beforeAll() {
         post1User1 = new Post(1, 1, "first post");
         post2User1 = new Post(2, 1, "second post");
