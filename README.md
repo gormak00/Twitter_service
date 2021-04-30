@@ -37,3 +37,7 @@ Authorised user can:
 6. Use docker-compose file to run service and db.
 7. Tests for service, that should cover various user scenarios.
 8. Public Github Repo from begging, working with Pull Requests
+
+## To start server
+1. ./gradlew build - to build .jar file
+2. sudo docker-compose up --build - to up docker-compose
