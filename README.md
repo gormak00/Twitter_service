@@ -29,11 +29,11 @@ Authorised user can:
 
 ## Tech Details
 
-1. Main stack - kotlin/java8 + spring core/boot/mvc/security/data/... + gradle
+1. Main stack - java8 + spring core/boot/mvc/security/data/... + gradle
 2. Authentication using JWT token
-3. Any database
+3. Postgresql
 4. Swagger UI with OpenApi service http endpoints description 
-5. Pack application in docker container(just create **Dockerfile**)
-6. Use docker-compose file to run service, db and other monitoring tools.
-7. Integration tests for service, that should cover various user scenarios.
+5. Pack application in docker container
+6. Use docker-compose file to run service and db.
+7. Tests for service, that should cover various user scenarios.
 8. Public Github Repo from begging, working with Pull Requests
